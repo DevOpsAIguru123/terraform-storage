@@ -21,7 +21,7 @@ resource "azurerm_resource_group" "rg" {
 
 ##  Demo now
 resource "azurerm_storage_account" "StorageAccountDemo" {
-  name                     = "tfc-dev"
+  name                     = "tfcdev"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
