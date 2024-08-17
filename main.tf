@@ -1,110 +1,23 @@
-terraform { 
-  cloud { 
-    
-    organization = "devops_vv" 
-
-    workspaces { 
-      name = "devops-dev" 
-    } 
-  }
-  
-   
-}
-
-
-terraform {
-  required_providers {
-    databricks = {
-      source  = "databricks/databricks"
-      version = "1.0.0"
-    }
-  }
-}
+# Required providers
 provider "azurerm" {
-  features {}
+  features = {}
 }
 
-provider "databricks" {
-  azure_workspace_resource_id = data.azurerm_databricks_workspace.this.id
-
+# Resource group
+resource "azurerm_resource_group" "example" {
+  name     = var.resource_group_name
+  location = var.location
 }
 
-variable "databricks_workspace_name" {
-  description = "databricks-dev"
-  default = "databricks-dev"
-}
-
-variable "cluster_name" {
-  description = "The name of the Databricks cluster."
-  default     = "my-databricks-cluster"
-}
-
-variable "spark_version" {
-  description = "The version of Apache Spark."
-  default     = "11.3.x-scala2.12"
-}
-
-variable "node_type_id" {
-  description = "The type of nodes to use in the cluster."
-  default     = "Standard_D3_v2"
-}
-
-variable "num_workers" {
-  description = "The number of worker nodes in the cluster."
-  default     = 2
-}
-
-# Create a Resource Group
-resource "azurerm_resource_group" "rg" {
-  name     = "tfc-storage-rg"
-  location = "southcentralus"
-}
-
-##  Demo now
-resource "azurerm_storage_account" "StorageAccountDemo" {
-  name                     = "tfcdev"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  account_tier             = "Standard"
-  account_replication_type = "GRS"
-
-  tags = {
-    video = "azure"
-    channel = "CloudQuickLabs"
-  }
-}
-
+# Azure Databricks Workspace
 resource "azurerm_databricks_workspace" "example" {
   name                = var.databricks_workspace_name
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku                 = "standard"
-
-  tags = {
-    Environment = "dev"
-  }
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku                 = "premium" # Choose the appropriate SKU (e.g., standard, premium)
 }
 
-data "azurerm_databricks_workspace" "this" {
-  name                = var.databricks_workspace_name
-  resource_group_name = azurerm_resource_group.rg.name
-}
-
-# Create the Databricks cluster
-resource "databricks_cluster" "this" {
-  cluster_name            = var.cluster_name
-  spark_version           = var.spark_version
-  node_type_id            = var.node_type_id
-  autotermination_minutes = 60
-  num_workers             = var.num_workers
-
-  custom_tags = {
-    "Environment" = "dev"
-    "Owner"       = "Vinod"
-  }
-}
-
-# Output the cluster ID
-output "cluster_id" {
-  value = databricks_cluster.this.id
+# Output the workspace URL
+output "workspace_url" {
+  value = azurerm_databricks_workspace.example.workspace_url
 }
