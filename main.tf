@@ -16,7 +16,7 @@ provider "azurerm" {
 # Create a Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = "tfc-storage-rg"
-  location = "your-location"
+  location = "southcentralus"
 }
 
 ##  Demo now
