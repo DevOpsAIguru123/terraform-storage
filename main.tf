@@ -31,6 +31,7 @@ provider "databricks" {
 
 variable "databricks_workspace_name" {
   description = "databricks-dev"
+  default = "databricks-dev"
 }
 
 variable "cluster_name" {
