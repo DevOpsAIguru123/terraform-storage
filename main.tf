@@ -6,15 +6,25 @@ terraform {
     workspaces { 
       name = "devops-dev" 
     } 
-  } 
+  }
+  
+   
 }
 
+
+terraform {
+  required_providers {
+    databricks = {
+      source  = "databricks/databricks"
+      version = "1.0.0"
+    }
+  }
+}
 provider "azurerm" {
   features {}
 }
 
 provider "databricks" {
-  azure_auth = true
   azure_workspace_resource_id = data.azurerm_databricks_workspace.this.id
 
 }
