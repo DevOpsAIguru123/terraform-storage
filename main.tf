@@ -74,7 +74,7 @@ resource "azurerm_storage_account" "StorageAccountDemo" {
   }
 }
 
-resource "azurerm_databricks_workspace" "example" {
+resource "azurerm_databricks_workspace" "this" {
   name                = var.databricks_workspace_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -85,13 +85,13 @@ resource "azurerm_databricks_workspace" "example" {
   }
 }
 
-data "azurerm_databricks_workspace" "example" {
-  name                = var.databricks_workspace_name
-  resource_group_name = azurerm_resource_group.rg.name
-}
+# data "azurerm_databricks_workspace" "this" {
+#   name                = var.databricks_workspace_name
+#   resource_group_name = azurerm_resource_group.rg.name
+# }
 
 # Create the Databricks cluster
-resource "databricks_cluster" "example" {
+resource "databricks_cluster" "this" {
   cluster_name            = var.cluster_name
   spark_version           = var.spark_version
   node_type_id            = var.node_type_id
@@ -106,5 +106,5 @@ resource "databricks_cluster" "example" {
 
 # Output the cluster ID
 output "cluster_id" {
-  value = databricks_cluster.example.id
+  value = databricks_cluster.this.id
 }
