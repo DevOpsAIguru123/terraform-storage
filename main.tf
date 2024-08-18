@@ -1,6 +1,5 @@
 # Required providers
 provider "azurerm" {
-  features = {}
 }
 
 terraform {
