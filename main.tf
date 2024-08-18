@@ -78,20 +78,20 @@ resource "azurerm_databricks_workspace" "example" {
   name                = var.databricks_workspace_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  sku                 = "standard"
+  sku                 = "premium"
 
   tags = {
     Environment = "dev"
   }
 }
 
-data "azurerm_databricks_workspace" "this" {
+data "azurerm_databricks_workspace" "example" {
   name                = var.databricks_workspace_name
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 # Create the Databricks cluster
-resource "databricks_cluster" "this" {
+resource "databricks_cluster" "example" {
   cluster_name            = var.cluster_name
   spark_version           = var.spark_version
   node_type_id            = var.node_type_id
@@ -106,5 +106,5 @@ resource "databricks_cluster" "this" {
 
 # Output the cluster ID
 output "cluster_id" {
-  value = databricks_cluster.this.id
+  value = databricks_cluster.example.id
 }
