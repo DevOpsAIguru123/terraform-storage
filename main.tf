@@ -3,6 +3,15 @@ provider "azurerm" {
   features = {}
 }
 
+terraform {
+  required_providers {
+    databricks = {
+      source  = "databricks/databricks"
+      version = "1.0.0"
+    }
+  }
+}
+
 # Resource group
 resource "azurerm_resource_group" "example" {
   name     = var.resource_group_name
