@@ -107,14 +107,14 @@ resource "azurerm_storage_account" "example" {
 }
 
 resource "azurerm_storage_container" "example" {
-  name                  = metastorecontainer
+  name                  = "metastorecontainer"
   storage_account_name  = azurerm_storage_account.example.name
-  container_access_type = "private"
+ # container_access_type = "private"
 }
 
 # Databricks Metastore
 resource "databricks_metastore" "example" {
-  name             = mymetastore
+  name             = "mymetastore"
   storage_root_path = "abfss://${azurerm_storage_container.example.name}@${azurerm_storage_account.example.name}.dfs.core.windows.net/"
   region           = azurerm_resource_group.rg.location
 
@@ -128,7 +128,7 @@ resource "databricks_metastore" "example" {
 
 # Unity Catalog
 resource "databricks_catalog" "example" {
-  name       = mycatalog
+  name       = "mycatalog"
   metastore_id = databricks_metastore.example.id
   comment    = "My Unity Catalog"
 
