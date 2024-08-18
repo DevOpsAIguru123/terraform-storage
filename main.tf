@@ -25,7 +25,7 @@ provider "azurerm" {
 }
 
 provider "databricks" {
-#  azure_workspace_resource_id = data.azurerm_databricks_workspace.this.id
+  azure_workspace_resource_id = data.azurerm_databricks_workspace.this.id
 
 }
 
@@ -85,10 +85,10 @@ resource "azurerm_databricks_workspace" "this" {
   }
 }
 
-# data "azurerm_databricks_workspace" "this" {
-#   name                = var.databricks_workspace_name
-#   resource_group_name = azurerm_resource_group.rg.name
-# }
+data "azurerm_databricks_workspace" "this" {
+  name                = var.databricks_workspace_name
+  resource_group_name = azurerm_resource_group.rg.name
+}
 
 # Create the Databricks cluster
 resource "databricks_cluster" "this" {
