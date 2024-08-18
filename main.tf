@@ -25,7 +25,7 @@ provider "azurerm" {
 }
 
 provider "databricks" {
-  azure_workspace_resource_id = data.azurerm_databricks_workspace.this.id
+  azure_workspace_resource_id = data.azurerm_databricks_workspace.example.id
 
 }
 
@@ -92,7 +92,7 @@ resource "databricks_cluster" "example" {
 
 # Output the cluster ID
 output "cluster_id" {
-  value = databricks_cluster.this.id
+  value = databricks_cluster.example.id
 }
 
 ### meta store ###
