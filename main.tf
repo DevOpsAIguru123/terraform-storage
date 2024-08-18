@@ -25,7 +25,7 @@ provider "azurerm" {
 }
 
 provider "databricks" {
-  azure_workspace_resource_id = data.azurerm_databricks_workspace.this.id
+#  azure_workspace_resource_id = data.azurerm_databricks_workspace.this.id
 
 }
 
