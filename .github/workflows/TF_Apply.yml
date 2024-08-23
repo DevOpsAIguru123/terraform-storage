@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/terraform_dbx
+      - dbx_vnet_injection
 
 jobs:
   terraform:
