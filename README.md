@@ -1,66 +1,102 @@
-# terraform-storage
+# Databricks Objects Creation Using Terraform
 
+This guide provides detailed instructions for provisioning and managing essential Databricks objects using Terraform. The objects include storage credentials, external storage locations, catalogs, foreign catalog connections, foreign catalogs, cluster policies, and clusters.
 
-# AI Platform Documentation
+## Table of Contents
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Databricks Provider Setup](#databricks-provider-setup)
+- [Resources](#resources)
+  - [Storage Credentials](#storage-credentials)
+  - [External Storage Locations](#external-storage-locations)
+  - [Catalogs](#catalogs)
+  - [Foreign Catalog Connections](#foreign-catalog-connections)
+  - [Foreign Catalogs](#foreign-catalogs)
+  - [Cluster Policies](#cluster-policies)
+  - [Clusters](#clusters)
+- [Deployment](#deployment)
+- [Best Practices](#best-practices)
+- [Troubleshooting](#troubleshooting)
+- [Additional Resources](#additional-resources)
 
 ## Overview
-Welcome to the AI Platform Documentation. This platform is built on a complex Azure Hub-and-Spoke network architecture, consisting of multiple interconnected Azure resources. The platform enables the deployment and management of multiple Databricks workspaces, unified through shared services such as centralized storage, secret management, monitoring, and workspace governance.
 
-## Network Architecture
+This document outlines the steps to use Terraform for automating the creation and management of various Databricks objects. By using infrastructure as code, you can standardize and simplify resource management, enabling repeatable, scalable, and auditable processes.
 
-### Hub-and-Spoke Topology
-The platform's network architecture follows the Azure Hub-and-Spoke model:
+## Prerequisites
 
-- **Hub VNet**: This central hub contains an **Azure Firewall** that manages and secures outbound and inbound traffic for all connected spoke virtual networks (VNets).
-- **Spoke VNet**: The spoke VNet hosts multiple subnets that each serve a specific purpose within the AI platform. The spoke subnets are:
-  1. **Databricks Control Plane Subnet**: This subnet handles the communication between the Databricks workspaces and Azure services.
-  2. **Databricks Data Plane Subnet**: Dedicated to the execution of Databricks workloads, including running clusters.
-  3. **Azure OpenAI Private Endpoints Subnet**: This subnet hosts private endpoints used for secure communication with the Azure OpenAI services.
+Before you begin, ensure that you have:
 
-## Databricks Environment Setup
+- Terraform installed on your local machine or CI/CD environment.
+- Access to a Databricks workspace.
+- A Databricks access token with sufficient privileges to create and manage resources.
+- Access to external storage if required (e.g., AWS S3, Azure ADLS).
+- Familiarity with Terraform configuration and syntax.
 
-### Workspaces and Metastore Configuration
-After the network setup, four **Databricks Workspaces** were deployed. These workspaces are configured and governed centrally:
+## Databricks Provider Setup
 
-1. **Workspace Assignment to Metastore**: Each workspace is connected to a centralized Databricks **metastore** to ensure consistent management of metadata, including tables, views, and permissions across all environments.
+The Databricks provider allows Terraform to manage resources in your Databricks workspace. Ensure that the provider is correctly configured with your Databricks workspace host URL and access token. The provider will be used for defining all the objects specified in this guide.
 
-2. **Storage Accounts**: A dedicated **Azure Data Lake Storage (ADLS)** account is created for each environment (Development, Test, Stage, and Production). These storage accounts store raw and processed data and are governed through catalogs in the metastore.
+## Resources
 
-### Databricks Environments
-- **Catalogs for Environments**: Separate **catalogs** are created in Databricks for each environment (Development, Test, Stage, and Production), allowing for isolation and permission management specific to each workspace.
+### Storage Credentials
 
-## Cluster Management and Governance
+Storage credentials allow Databricks to securely access external storage systems such as AWS S3 or Azure ADLS. You will need to configure the appropriate permissions and define these credentials within Terraform to ensure seamless access to your data.
 
-- **Cluster and Cluster Policies**: Clusters in each workspace are governed by a set of pre-defined **cluster policies** that enforce security, scalability, and cost control. These policies are managed through a **dedicated repository** where updates and policy changes are versioned.
-  
-- **Tags**: All Databricks clusters are tagged to enable cost tracking and identification by environment, owner, and purpose.
+### External Storage Locations
 
-- **Workspace Object Permissions**: Permissions for workspace objects such as notebooks, data tables, and jobs are also controlled and managed through repositories, ensuring consistent governance across environments.
+External storage locations refer to the paths in external storage systems (e.g., S3 buckets, ADLS containers) where Databricks can read and write data. Proper configuration of these locations ensures efficient data management and security.
 
-## Resource Management Repositories
+### Catalogs
 
-The platform’s resources are managed through different repositories to ensure a modular approach:
+Catalogs are top-level containers for organizing your data within Databricks. They can be used to group related databases and define permissions for managing them. A catalog helps improve data governance by providing logical separation of different datasets.
 
-- **ADLS Resources**: All Azure Data Lake Storage resources, including storage account configurations, permissions, and lifecycle management, are handled in a dedicated repository.
+### Foreign Catalog Connections
 
-- **Databricks Workspaces and Object Permissions**: A separate repository is used to manage the deployment and configuration of Databricks clusters, workspace object permissions, cluster policies, and any related configurations.
+Foreign catalog connections enable Databricks to integrate with external catalog systems such as AWS Glue or Hive Metastore. Establishing these connections allows you to manage external metadata alongside Databricks objects, streamlining data discovery and management.
 
-## Centralized Secret Management
+### Foreign Catalogs
 
-- A central **Azure Key Vault** is used to manage and store sensitive information such as:
-  - Secrets for **App Registrations**
-  - **Terraform** authentication credentials
-  - **Database connection strings** and secrets
-  - Any other application secrets used by the platform
+Once the foreign catalog connections are set up, you can create foreign catalogs that link external metadata systems to Databricks. This allows Databricks to use external metadata services for improved data consistency and integration across platforms.
 
-Access to the key vault is tightly controlled and restricted by role-based access control (RBAC) policies.
+### Cluster Policies
 
-## Monitoring and Usage Insights
+Cluster policies provide a way to enforce standards on cluster configurations within your workspace. By using policies, administrators can control which cluster types and settings are allowed, helping to reduce costs and maintain security across teams.
 
-- **Databricks Monitoring Repository**: A separate repository is dedicated to monitoring the health and performance of Databricks workspaces. This repository handles the creation and deployment of monitoring dashboards, which provide **usage insights**, cluster performance metrics, and cost reporting across environments.
+### Clusters
 
-The monitoring system helps platform administrators track resource utilization, identify potential issues, and optimize the use of Databricks resources.
+Clusters are the computational resources in Databricks that run your data processing and machine learning workloads. Configuring clusters via Terraform allows you to automate the creation, scaling, and management of clusters with predefined settings, improving efficiency and cost management.
 
----
+## Deployment
 
-This documentation summarizes the core components and best practices used in building and maintaining the AI platform on Azure. By adhering to this structure, the platform ensures scalability, security, and centralized governance across its multiple environments and workspaces.
+To deploy the objects defined in your Terraform configuration:
+
+1. **Initialize the Terraform environment** – Run `terraform init` to download necessary provider plugins and set up your working directory.
+2. **Plan your changes** – Run `terraform plan` to review the resources that will be created or modified.
+3. **Apply the changes** – Run `terraform apply` to provision the Databricks objects according to your configuration.
+
+## Best Practices
+
+- **Modularize your Terraform configurations**: Split your configuration files into reusable modules for managing different components like storage, clusters, and policies.
+- **Use version control**: Store your Terraform configurations in a version-controlled repository to track changes and enable collaboration.
+- **Apply least privilege principles**: When creating storage credentials or managing catalogs, ensure that only the necessary permissions are granted to each resource.
+- **Test configurations in non-production environments**: Before deploying to production, validate your Terraform scripts in staging environments to avoid misconfigurations.
+
+## Troubleshooting
+
+If you encounter issues during deployment, here are some common troubleshooting steps:
+
+- **Authentication failures**: Double-check your Databricks access token and workspace URL in the provider configuration.
+- **Permission errors**: Ensure that the user or service principal deploying the Terraform configuration has sufficient permissions to create the resources.
+- **Storage access issues**: Verify that the credentials used for accessing external storage (e.g., AWS IAM roles or Azure credentials) are properly configured.
+
+## Additional Resources
+
+- [Databricks Terraform Provider Documentation](https://registry.terraform.io/providers/databricks/databricks/latest/docs)
+- [Terraform Documentation](https://www.terraform.io/docs)
+- [Databricks REST API Reference](https://docs.databricks.com/dev-tools/api/latest/index.html)
+
+## Conclusion
+
+By following this guide, you can automate the creation of essential Databricks objects using Terraform, making it easier to manage infrastructure at scale. Review and customize the configurations as needed for your specific use case.
